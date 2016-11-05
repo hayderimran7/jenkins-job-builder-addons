@@ -82,7 +82,8 @@ setup(
             'views:delivery_pipeline_view'
         ],
         'jenkins_jobs.modules': [
-            'views=jenkins_jobs_addons.views:Views'
+            'views=jenkins_jobs_addons.views:Views',
+            'groovy-label-script=jenkins_jobs_addons.groovy_label:GroovyLabelAssignment'
 
         ]
     },
