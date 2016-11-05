@@ -361,13 +361,51 @@ def build_pipeline_view(parser, xml_parent, data):
     XML.SubElement(view, 'showPipelineDefinitionHeader').text = show_def
 
 
+def list_view_view(parser, xml_parent, data):
+    columns = ['StatusColumn', 'WeatherColumn', 'JobColumn', 'LastSuccessColumn', 'LastFailureColumn',
+             'LastDurationColumn', 'BuildButtonColumn']
+    view = XML.SubElement(xml_parent, 'hudson.model.ListView')
+    in_folder = data.get('folder', False)
+    owner_attrs = dict()
+    if in_folder:
+        owner_attrs['class'] = 'com.cloudbees.hudson.plugins.folder.Folder'
+        owner_attrs['reference'] = '../../..'
+        XML.SubElement(view, 'owner', attrib=owner_attrs)
+    XML.SubElement(view, 'name').text = data.get('name')
+
+    executors = data.get('filter-executors', False)
+    XML.SubElement(view, 'filterExecutors').text = str(executors).lower()
+
+    queue = data.get('filter-queue', False)
+    XML.SubElement(view, 'filterQueue').text = str(queue).lower()
+
+    properties_attributes = dict()
+    properties_attributes['class'] = 'hudson.model.View$PropertyList'
+    XML.SubElement(view, 'properties', attrib=properties_attributes)
+
+    job_names_elem = XML.SubElement(view, 'jobNames')
+    view_jobs = data.get('jobs', list())
+    XML.SubElement(job_names_elem, 'comparator').set('class', 'hudson.util.CaseInsensitiveComparator')
+    for job in view_jobs:
+        XML.SubElement(job_names_elem, 'string').text = job
+
+    XML.SubElement(view, 'jobFilters')
+
+    view_columns_elem = XML.SubElement(view, 'columns')
+    for column in columns:
+        XML.SubElement(view_columns_elem, "hudson.views.%s" % column)
+
+    XML.SubElement(view, 'recurse').text = 'false'
+
+
+
 class Views(jenkins_jobs.modules.base.Base):
     sequence = 20
 
     component_type = 'view'
     component_list_type = 'views'
 
-    def gen_xml(self, parser, xml_parent, data):
+    def gen_xml(self, xml_parent, data):
         views = XML.SubElement(xml_parent, 'views')
         for view in data.get('views', []):
-            self.registry.dispatch('view', parser, views, view)
+            self.registry.dispatch('view', views, view)

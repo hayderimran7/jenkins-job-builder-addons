@@ -77,6 +77,7 @@ setup(
         'jenkins_jobs.views': [
             'all=jenkins_jobs_addons.views:all_view',
             'build_pipeline=jenkins_jobs_addons.views:build_pipeline_view',
+            'list=jenkins_jobs_addons.views:list_view_view',
             'delivery_pipeline=jenkins_jobs_addons.'
             'views:delivery_pipeline_view'
         ],
