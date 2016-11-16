@@ -385,9 +385,13 @@ def list_view_view(parser, xml_parent, data):
 
     job_names_elem = XML.SubElement(view, 'jobNames')
     view_jobs = data.get('jobs', list())
+    view_jobs_regex = data.get('jobs_regex', False)
     XML.SubElement(job_names_elem, 'comparator').set('class', 'hudson.util.CaseInsensitiveComparator')
     for job in view_jobs:
         XML.SubElement(job_names_elem, 'string').text = job
+
+    if view_jobs_regex:
+        XML.SubElement(view, 'includeRegex').text = view_jobs_regex
 
     XML.SubElement(view, 'jobFilters')
 
